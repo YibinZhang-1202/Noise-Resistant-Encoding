@@ -1,1 +1,4 @@
 .idea/
+dataset/dirty/*
+venv/
+__pycache__
