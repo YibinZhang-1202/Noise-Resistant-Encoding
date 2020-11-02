@@ -7,7 +7,7 @@ from collections import Counter
 from nre import *
 
 ##############################################################
-NUM_CORES = 4
+NUM_CORES = 1
 cluster_graph = None
 fields = None
 all_right_fields = None
@@ -50,8 +50,9 @@ def encoding_training_set(fields, training_set):
 
 
 def encode_parallel(training_set, the_cluster_graph, the_fields, the_all_right_fields):
-    global cluster_graph, fields, all_right_fields
+    global cluster_graph, fields, all_right_fields, K
 
+    K = the_cluster_graph.k
     cluster_graph = the_cluster_graph
     fields = the_fields
     all_right_fields = the_all_right_fields
@@ -85,22 +86,6 @@ def encode_chunk(chunk):
     return chunk
 
 
-def encode(dataset, cluster_graph, fields, all_right_fields):
-    print("K =", K)
-    for index, row in dataset.iterrows():
-        for field in fields:
-            words_list = str(row[field]).split(' ')
-
-            encoded_words_list = [get_closet_encoding(item, cluster_graph, field, row, all_right_fields) for item in words_list]
-
-            new_cell = ' '.join(map(str, encoded_words_list))
-            dataset._set_value(index, field, new_cell)
-
-        # print(index)
-
-    return dataset
-
-
 def get_closet_encoding(word, cluster_graph, field, row, all_right_fields):
     encoded_word = cluster_graph.encode_word(word)
 
@@ -113,7 +98,7 @@ def get_closet_encoding(word, cluster_graph, field, row, all_right_fields):
         right_words_list = str(row[x]).split(' ')
 
         for right_word in right_words_list:
-            if damerau_levenshtein_distance(right_word, word) <= K:
+            if damerau_levenshtein_distance(right_word, word) <= cluster_graph.k:
                 right_encoded_word = cluster_graph.encode_word(right_word)
                 if right_encoded_word is not None:
                     # print("a")

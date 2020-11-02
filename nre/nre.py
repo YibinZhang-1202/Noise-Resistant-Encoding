@@ -2,6 +2,8 @@ from pyxdameraulevenshtein import damerau_levenshtein_distance
 import distance
 import copy
 
+cluster_graph = None
+
 
 def dist(a, b):
     # return distance.jaccard(a, b)
@@ -44,10 +46,10 @@ class Node:
     def print_node(self):
         print(self.representative.word, self.representative.freq, self.share_typo_neighbors)
 
-    def belong_node(self, word):
+    def belong_node(self, word, k):
         cluster_max_freq = -1
         for x in self.cluster_list:
-            if dist(x.word, word) <= Graph.k and x.freq > cluster_max_freq:
+            if dist(x.word, word) <= k and x.freq > cluster_max_freq:
                 cluster_max_freq = x.freq
         return cluster_max_freq
 
@@ -59,17 +61,15 @@ class Node:
 
 
 class Graph:
-    k = None
-
     def __init__(self, word_frequency_map, gamma, k):
         self.nodes_list = []
         self.word_frequency_map = word_frequency_map
         self.sum_freq = 0
         self.gamma = gamma
         self.ignore_indices = []
-        Graph.k = k
+        self.k = k
 
-        print("K = ", Graph.k)
+        print("K = ", self.k)
         # Cost N
         for x in word_frequency_map:
             self.nodes_list.append(Node(x, self.word_frequency_map[x]))
@@ -174,7 +174,7 @@ class Graph:
             count = 0
             for neighbor_c in the_cluster.share_typo_neighbors:
                 for token in self.nodes_list[neighbor_c].cluster_list:
-                    if dist(word.word, token.word) <= Graph.k and token.freq >= word.freq:
+                    if dist(word.word, token.word) <= self.k and token.freq >= word.freq:
                         count = count + 1
                         break
             word.hn_card = count
@@ -193,10 +193,17 @@ class Graph:
         return -1 * cluster_fid_score
 
     def build_sharetypo_edge(self):
+        def share_typos(c1, c2):
+            for e_c1 in c1:
+                for e_c2 in c2:
+                    if dist(e_c1.word, e_c2.word) <= self.k:
+                        return True
+            return False
+
         for outer_index, out_cluster in enumerate(self.nodes_list):
             for inner_index in range(outer_index+1, len(self.nodes_list)):
                 inner_cluster = self.nodes_list[inner_index]
-                if Graph.share_typos(out_cluster.cluster_list, inner_cluster.cluster_list):
+                if share_typos(out_cluster.cluster_list, inner_cluster.cluster_list):
                     out_cluster.share_typo_neighbors.append(inner_index)
                     inner_cluster.share_typo_neighbors.append(outer_index)
 
@@ -215,21 +222,15 @@ class Graph:
         max_freq = 0
         encoded_word = None
         for x in self.nodes_list:
-            if x.belong_node(word) > max_freq:
+            if x.belong_node(word, self.k) > max_freq:
                 encoded_word = x.representative.word
 
         return encoded_word
 
-    @staticmethod
-    def share_typos(c1, c2):
-        for e_c1 in c1:
-            for e_c2 in c2:
-                if dist(e_c1.word, e_c2.word) <= Graph.k:
-                    return True
-        return False
-
 
 def cluster(word_frequency_map, gamma, k):
+    global cluster_graph
+
     print("There are", len(word_frequency_map), "cluster originally.")
 
     cluster_graph = Graph(word_frequency_map, gamma, k)

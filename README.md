@@ -11,10 +11,14 @@ Running NRE consist of following steps.
 
 1. Running NRE Clustering over a EM training set and encode the training set.
     ```
-        python3 nre/nre_clustering.py 
+    python3 nre/nre_clustering.py 
     ```
     You can set hyperparameters by changing global variables in nre/nre_clustering.py.
 
 2. Encoding the validation set and test set.
+    ```
+    python3 nre/nre_encoding.py
+    ```
+
 ## Nov. 1, 2020: a few days are required to update this repo.
 
