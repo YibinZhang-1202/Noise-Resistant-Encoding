@@ -19,6 +19,7 @@ Running NRE consist of following steps.
     ```
     python3 nre/nre_encoding.py
     ```
+    You can apply Noise Model on a test set by running utilities/add_noise.py
 
 ## Nov. 1, 2020: a few days are required to update this repo.
 
