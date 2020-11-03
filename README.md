@@ -21,5 +21,15 @@ Running NRE consist of following steps.
     ```
     You can apply Noise Model on a test set by running utilities/add_noise.py
 
+## Training and Testing on *Ditto*
+The encoded training, validation, and test set are used for *ditto*.
+
+1. For a dataset contains tuple pairs consist of more than 512 tokens (Textual Company), run utilities/tfidf_summarization.py to summarize it.
+    (Noise Model is applied after this summarization.)
+    
+2. Running utilities/mixDA.py to generate a augmented training set for *ditto*'s mixDA.
+
+3. Running utilities/span_typing_parallel.py for injecting domain knowledge to training, validation, and test set.
+
 ## Nov. 1, 2020: a few days are required to update this repo.
 
