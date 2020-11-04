@@ -113,6 +113,8 @@ def get_closet_encoding(word, cluster_graph, field, row, all_right_fields):
 
 
 if __name__ == "__main__":
+    # Using min_frequency = 100 for Textual Company dataset to prevent a vocabulary that is too large.
+    # Using min_frequency = 1 for other datasets.
     MIN_FREQUENCY = 1
 
     # GAMMA is objective weight alpha and K is the distance threshold lambda in our paper

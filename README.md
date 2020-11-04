@@ -31,5 +31,10 @@ The encoded training, validation, and test set are used for *ditto*.
 
 3. Running utilities/span_typing_parallel.py for injecting domain knowledge to training, validation, and test set.
 
+4. Training *ditto* with sufficient number of epochs and then choosing the model which performs best on validation set.
+    ```
+    python3 train_model.py [training_set] [mixDA_training_set] [name_of_bert] [name_of_classifier] [number_of_epochs] [validation_set]
+    ```
+
 ## Nov. 1, 2020: a few days are required to update this repo.
 
