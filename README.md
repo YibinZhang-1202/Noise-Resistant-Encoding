@@ -44,7 +44,20 @@ The encoded training, validation, and test set are used for *ditto*.
 ## Data Augmentation and Adversarial Training baselines
 You can run utilities/add_noise.py to generate augmented training examples for Data Augmentation and Adversarial Training.
 
+## Typo-Corrector baseline
+Refer to the original [repo](https://github.com/danishpruthi/Adversarial-Misspellings).
+
+1. typo_corrector/em_to_sentence.py and typo_corrector/sentence_to_em.py are used to transfer between EM structure and serialized format (like a sentence).
+
+2. You can train this typo corrector by
+    ```
+    python3 train_test.py --train-file [training_set] --dev-file [validation_set] --train-rep 'swap' 'drop' 'add' 'none' --val-rep 'swap' 'drop' 'add' 'none' --train-rep-probs 0.25 0.25 0.25 0.25 --val-rep-probs 0.25 0.25 0.25 0.25 --task-name [task_name] --new-vocab --min-freq 1 --model-type elmo-plus-scrnn --num-epochs 80 --save --unk-output
+    ```
+ 
+3. You can use this typo corrector for prediction by
+    ```
+    python3 train_test.py --no-train --vocab-size [vocab_size] --task-name [task_name] --model-path [model_path] --ori-folder [folder_to_origin_files] --pred-folder [folder_to_prediction_files] --model-type elmo-plus-scrnn
+    ```
 
 
-## Nov. 1, 2020: a few days are required to update this repo.
 
